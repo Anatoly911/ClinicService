@@ -2,27 +2,50 @@ syntax = "proto3";
 
 option csharp_namespace = "ClinicServiceNamespace";
 import "google/protobuf/wrappers.proto";
-service ClinicService{
-	rpc CreateClient (CreateClientRequest) returns (CreateClientResponse);
-	rpc UpdateClient (UpdateClientRequest) returns (UpdateClientResponse);
-	rpc DeleteClient (DeleteClientRequest) returns (DeleteClientResponse);
-	rpc GetClientById (GetClientByIdRequest) returns (GetClientByIdResponse);
-	rpc GetClients (GetClientsRequest) returns (GetClientsResponse);
-}
+import "google/api/annotations.proto";
+package proto;
 
+//Сервис клиники
+service ClinicService{
+	//Добавление клиента
+	rpc CreateClient (CreateClientRequest) returns (CreateClientResponse);
+	//Обновление клиента
+	rpc UpdateClient (UpdateClientRequest) returns (UpdateClientResponse);
+	//Удаление клиента
+	rpc DeleteClient (DeleteClientRequest) returns (DeleteClientResponse);
+	//Получить клиента по идентификатору
+	rpc GetClientById (GetClientByIdRequest) returns (GetClientByIdResponse){
+		option (google.api.http) = {
+			post: "/api/clientById",
+			body: "*",
+			response_body: "client"
+		};
+	}
+	//Получить список клиентов
+	rpc GetClients (GetClientsRequest) returns (GetClientsResponse){
+		option (google.api.http) = {
+			get: "/api/clients"
+		};
+	}
+}
+//Параметры запроса на создание клиента
 message CreateClientRequest{
+	//Документа
 	string document = 1;
+	//Фамилия
 	string surname = 2;
+	//Имя
 	string firstName = 3;
+	//Отчество
 	string patronymic = 4;
 }
-
+//Результат создания клиента
 message CreateClientResponse{
 	google.protobuf.Int32Value clientId = 1;
 	int32 errCode = 2;
 	string errMessage = 3;
 }
-
+//Параметры запроса на обновление клиента
 message UpdateClientRequest{
 	int32 clientId = 1;
 	string document = 2;
@@ -30,25 +53,25 @@ message UpdateClientRequest{
 	string firstName = 4;
 	string patronymic = 5;
 }
-
+//Результат обновления клиента
 message UpdateClientResponse{
 	int32 errCode = 1;
 	string errMessage = 2;
 }
-
+//Параметры запроса на удаление клиента
 message DeleteClientRequest{
 	int32 clientId = 1;
 }
-
+//Результат удаления клиента
 message DeleteClientResponse{
 	int32 errCode = 1;
 	string errMessage = 2;
 }
-
+//Параметры запроса на получения клиента по идентификатору
 message GetClientByIdRequest{
 	int32 clientId = 1;
 }
-
+//Результат полумения клиента по идентификатору
 message GetClientByIdResponse{
 	ClientResponse client = 1;
 	int32 errCode = 2;
@@ -65,7 +88,7 @@ message ClientResponse{
 
 message GetClientsRequest{
 
-}
+}//Параметры запроса на получения списка клиентов
 message GetClientsResponse{
 	repeated ClientResponse clients = 1;
 	int32 errCode = 2;
